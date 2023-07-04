@@ -2,7 +2,7 @@ import React from 'react'
 import { Grid } from '@mui/material'
 import SideBar from '../components/Home/LeftSide/SideBar'
 
-const ChatRender = () => {
+const ChatSection = () => {
     return (
         <>
             <Grid container>
@@ -10,13 +10,13 @@ const ChatRender = () => {
                     <SideBar></SideBar>
                 </Grid>
                 <Grid item xs={10} sm={10} md={9} >
-                    {/* <ChatsPage /> */}
+
                 </Grid>
             </Grid>
         </>
     )
 }
 
-export default ChatRender
+export default ChatSection
 
 

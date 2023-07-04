@@ -4,6 +4,7 @@ const User = require("./../models/userModel");
 const Thread = require("./../models/threadModel");
 const sendEmail = require("./../utils/email")
 const { promisify } = require("util");
+const StreamChat = require('stream-chat').StreamChat;
 const axios = require("axios");
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -11,7 +12,22 @@ const signToken = (id) => {
   });
 };
 
-const createSendToken = (user, statusCode, res) => {
+const connectToStreamChat = async (id, name, image) => {
+  const streamchat = StreamChat.getInstance(process.env.STREAM_API_KEY, process.env.STREAM_API_KEY_SECRET);
+
+  //check if the user is existed
+  const isExist = await streamchat.queryUsers({ id });
+  if (isExist.users.length > 0) {
+    const token = streamchat.createToken(id);
+    return token
+  } else {
+    await streamchat.upsertUser({ id, name, image });
+    const token = streamchat.createToken(id);
+    return token
+  }
+}
+
+const createSendToken = async (user, statusCode, res) => {
   const token = signToken(user._id);
   const cookieOptions = {
     expires: new Date(
@@ -25,13 +41,15 @@ const createSendToken = (user, statusCode, res) => {
 
   // Remove password from output
   user.password = undefined;
+  const streamToken = await connectToStreamChat(user._id.toString(), user.name, user.image);
 
   res.status(statusCode).json({
     status: 'success',
     token,
     data: {
       user
-    }
+    },
+    streamToken
   });
 };
 
@@ -43,8 +61,8 @@ exports.signup = async (req, res, next) => {
     passwordConfirm: req.body.passwordConfirm,
   });
 
-  const data ={
-    "username" : `${req.body.email}`,
+  const data = {
+    "username": `${req.body.email}`,
     "first_name": `${req.body.name}`,
     "email": `${req.body.email}`,
     "secret": `${req.body.email}`
@@ -54,19 +72,19 @@ exports.signup = async (req, res, next) => {
     method: 'post',
     maxBodyLength: Infinity,
     url: 'https://api.chatengine.io/users/',
-      headers: { 
-        'PRIVATE-KEY': 'debcf359-8bde-4f01-97fc-40a5100959c8'
-      },
-      data : data
+    headers: {
+      'PRIVATE-KEY': 'debcf359-8bde-4f01-97fc-40a5100959c8'
+    },
+    data: data
   };
 
   axios(config)
-  .then(function (response) {
-    console.log(JSON.stringify(response.data));
-  })
-  .catch(function (error) {
-    console.log(error);
-  });
+    .then(function (response) {
+      console.log(JSON.stringify(response.data));
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
 
   createSendToken(newUser, 201, res);
 };

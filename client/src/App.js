@@ -1,9 +1,8 @@
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
-// import { getTestData } from "./actions/test";
-// import { Route, Switch } from "react-router";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
-import ChatRender from "./chat/ChatRender";
+import ChatSection from "./chat/ChatSection";
+
 
 import { ProtectedRoute } from "./auth/ProtectedRoute";
 import { AuthProvider } from "./auth/AuthHook";
@@ -71,7 +70,7 @@ const App = () => {
               </ProtectedRoute>} />
             <Route exact path="/chat" element={
               <ProtectedRoute>
-                {/* <ChatRender /> */}
+                {/* <ChatSection /> */}
               </ProtectedRoute>} />
           </Routes>
         </AuthProvider>

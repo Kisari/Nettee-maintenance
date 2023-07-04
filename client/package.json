@@ -24,6 +24,8 @@
     "react-tag-input-component": "^2.0.2",
     "redux": "^4.2.1",
     "redux-thunk": "^2.4.2",
+    "stream-chat": "^8.10.0",
+    "stream-chat-react": "^10.8.5",
     "sweetalert2": "^11.7.5",
     "web-vitals": "^3.3.1"
   },
