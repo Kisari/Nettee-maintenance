@@ -1,6 +1,7 @@
 import React from 'react'
 import { Grid } from '@mui/material'
 import SideBar from '../components/Home/LeftSide/SideBar'
+import ChatBox from './ChatBox/ChatBox'
 
 const ChatSection = () => {
     return (
@@ -10,7 +11,7 @@ const ChatSection = () => {
                     <SideBar></SideBar>
                 </Grid>
                 <Grid item xs={10} sm={10} md={9} >
-
+                    <ChatBox></ChatBox>
                 </Grid>
             </Grid>
         </>
