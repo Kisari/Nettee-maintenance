@@ -32,11 +32,6 @@ const CreateThreadForm = ({ isOpen, toggleOpenModal }) => {
             content: "",
             image: "",
             tags: [],
-            // likes: [],
-            // comments: [],
-            // tags: [],
-            // pins: [],
-            // share: [],
         }
     });
     //image handle
@@ -84,7 +79,7 @@ const CreateThreadForm = ({ isOpen, toggleOpenModal }) => {
                     p: 4,
                 }} component="form"
                     onSubmit={handleSubmit(handleForm)}>
-                    <Typography variant='h5' component='h1' align='center' >Create thread</Typography>
+                    {/* <Typography variant='h5' component='h1' align='center' >Create thread</Typography> */}
                     <Divider />
                     <List sx={{ width: '100%', bgcolor: '#FFFFFF' }}>
                         <ListItem>
@@ -100,7 +95,7 @@ const CreateThreadForm = ({ isOpen, toggleOpenModal }) => {
                         size='small'
                         id="title"
                         name='title'
-                        label="Title"
+                        label="Title*"
                         {...register("title", { required: "Title is required" })}
                     />
                     {errors.title && <p style={{ color: 'red', margin: '0' }}>{errors.title.message}</p>}
