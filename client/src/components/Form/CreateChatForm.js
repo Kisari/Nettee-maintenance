@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useForm } from "react-hook-form"
-import { Autocomplete, Modal, Box, Typography, Button, List, ListItem, ListItemAvatar, Avatar, ListItemText, TextField, Divider, Chip } from '@mui/material'
+import { Autocomplete, Modal, Box, Button, Avatar, TextField, Divider, Chip } from '@mui/material'
 import { createSelector } from '@reduxjs/toolkit'
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
-const CreateChatForm = ({ isOpen, toggleOpenModal }) => {
+const CreateChatForm = ({ isOpen, toggleOpenModal, client, connectUserToStream }) => {
     const { register, handleSubmit, formState: { errors }, setValue } = useForm({
         defaultValues: {
             members: [],
@@ -12,15 +13,25 @@ const CreateChatForm = ({ isOpen, toggleOpenModal }) => {
             chatName: "",
         }
     });
+    const navigate = useNavigate();
     const getProperAllUserData = createSelector((state) => state.userReducer?.allUserData, (data) => data);
     const allUser = useSelector(getProperAllUserData);
+    const currentUser = JSON.parse(localStorage.getItem("NETTEE_TOKEN"));
 
-    const handleForm = (event) => {
+    const handleForm = async (event) => {
         console.log(event);
+        connectUserToStream()
+        await client.channel('messaging', `${event.chatName.replace(/\s/g, "")}_${event.members.join("")}`, {
+            members: event.members,
+            name: event.chatName,
+            image: event.imgUrl
+        }).create().then(() => navigate(0));
+
     }
     const handleAddPeople = (user) => {
         const userID = user?.map((props) => props._id);
-        setValue('tags', userID);
+        userID.push(currentUser?.data?.user?._id);
+        setValue('members', userID);
     }
 
     return (
@@ -42,7 +53,7 @@ const CreateChatForm = ({ isOpen, toggleOpenModal }) => {
                     p: 4,
                 }} component="form"
                     onSubmit={handleSubmit(handleForm)}>
-                    {/* <Typography variant='h5' component='h1' align='center' >Create channel</Typography> */}
+
                     <Divider />
                     <TextField
                         fullWidth
@@ -62,14 +73,16 @@ const CreateChatForm = ({ isOpen, toggleOpenModal }) => {
                         id="imgUrl"
                         name='imgUrl'
 
-                        {...register("content")}
+                        {...register("imgUrl")}
                     />
                     <Box component='div'>
                         <Autocomplete
                             multiple
-                            id="tags-outlined"
                             options={allUser}
-                            getOptionLabel={(option) => option.name}
+                            getOptionLabel={(option) => option._id}
+                            renderOption={(props, option) => {
+                                return <li {...props}>{option.name}</li>
+                            }}
                             isOptionEqualToValue={(option, value) => option._id === value._id}
                             filterSelectedOptions
                             renderInput={(params) => (
@@ -81,7 +94,7 @@ const CreateChatForm = ({ isOpen, toggleOpenModal }) => {
                             )}
                             renderTags={(tagValue, getTagProps) => {
                                 return tagValue.map((option, index) => (
-                                    <Chip {...getTagProps({ index })} label={option?.name} avatar={<Avatar alt={option?.name} src={!option?.image && option?.name?.charAt(0)} />} />
+                                    <Chip {...getTagProps({ index })} key={index} label={option?.name} avatar={<Avatar alt={option?.name} src={!option?.image && option?.name?.charAt(0)} />} />
                                 ));
                             }}
                             onChange={(event, value) => handleAddPeople(value)}

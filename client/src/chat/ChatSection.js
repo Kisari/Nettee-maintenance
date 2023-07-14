@@ -10,7 +10,7 @@ const ChatSection = () => {
                 <Grid item xs={2} sm={2} md={3} >
                     <SideBar></SideBar>
                 </Grid>
-                <Grid item xs={10} sm={10} md={9} sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'warp' }}>
+                <Grid item xs={10} sm={10} md={9} sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'warp', height: '95vh' }}>
                     <ChatBox></ChatBox>
                 </Grid>
             </Grid>
