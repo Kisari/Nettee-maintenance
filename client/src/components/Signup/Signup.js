@@ -1,7 +1,16 @@
-import React, { useEffect } from "react";
-import { Grid, Button, TextField, Box, Typography, Container, CssBaseline, Link } from "@mui/material";
-import { useForm } from "react-hook-form"
-import { grey } from '@mui/material/colors'
+import React from "react";
+import {
+  Grid,
+  Button,
+  TextField,
+  Box,
+  Typography,
+  Container,
+  CssBaseline,
+  Link,
+} from "@mui/material";
+import { useForm } from "react-hook-form";
+import { grey } from "@mui/material/colors";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { createNewUser } from "../../actions/user";
@@ -11,7 +20,11 @@ export default function Signup() {
   const history = useNavigate();
   const dispatch = useDispatch();
   const secondary = grey[500];
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
   const onSubmit = (data) => {
     dispatch(createNewUser(data, history));
@@ -27,17 +40,28 @@ export default function Signup() {
           alignItems: "center",
         }}
       >
-        <Typography component="h1" align="center" sx={{
-          fontWeight: "bold"
-
-        }}>
-          Sign up
-        </Typography>
-        <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)} sx={{
-          boxShadow: "rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px",
-          padding: [2, 4]
-        }}>
-          <Grid container spacing={2}>
+        <Box
+          component="form"
+          noValidate
+          onSubmit={handleSubmit(onSubmit)}
+          sx={{
+            boxShadow:
+              "rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px",
+            padding: [2, 4],
+          }}
+        >
+          <Grid container rowSpacing={2}>
+            <Grid item xs={12}>
+              <Typography
+                component="h1"
+                align="center"
+                sx={{
+                  fontWeight: "bold",
+                }}
+              >
+                Sign up
+              </Typography>
+            </Grid>
             <Grid item xs={12}>
               <TextField
                 required
@@ -64,7 +88,7 @@ export default function Signup() {
                 variant="outlined"
                 {...register("email", {
                   required: "E-mail Address is required.",
-                  pattern: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+                  pattern: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
                 })}
                 error={Boolean(errors.email)}
                 helperText={errors.email?.message}
@@ -80,11 +104,10 @@ export default function Signup() {
                 id="password"
                 autoComplete="new-password"
                 variant="outlined"
-                {...register("password",
-                  {
-                    required: "Password is required.",
-                    // pattern: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
-                  })}
+                {...register("password", {
+                  required: "Password is required.",
+                  // pattern: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
+                })}
                 error={Boolean(errors.password)}
                 helperText={errors.password?.message}
               />
@@ -113,31 +136,43 @@ export default function Signup() {
             size="medium"
             sx={{
               padding: [1, 1],
-              marginY: [3, 2]
+              marginY: [3, 2],
             }}
-
           >
             Register
           </Button>
-          <Grid container spacing={1} sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            // marginTop: "12px"
-          }}>
+          <Grid
+            container
+            columnSpacing={1}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              // marginTop: "12px"
+            }}
+          >
             <Grid item>
-              <Typography component="span" color={secondary} sx={{
-                fontWeight: "bold",
-                fontSize: "14px"
-              }}>
+              <Typography
+                component="span"
+                color={secondary}
+                sx={{
+                  fontWeight: "bold",
+                  fontSize: "14px",
+                }}
+              >
                 Already have an account?
               </Typography>
             </Grid>
             <Grid item>
-              <Link href="/login" underline="none" variant="span" sx={{
-                fontWeight: "bold",
-                fontSize: "16px",
-              }}>
+              <Link
+                href="/login"
+                underline="none"
+                variant="span"
+                sx={{
+                  fontWeight: "bold",
+                  fontSize: "16px",
+                }}
+              >
                 Log in
               </Link>
             </Grid>

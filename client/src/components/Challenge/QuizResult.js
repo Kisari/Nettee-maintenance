@@ -26,6 +26,7 @@ export default function QuizResult(props) {
             }
             dispatch(updateUser(currentUser.data.user._id, newBadge))
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [correctAnswers])
 
     return (

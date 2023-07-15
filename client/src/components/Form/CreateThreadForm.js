@@ -38,6 +38,7 @@ const CreateThreadForm = ({ isOpen, toggleOpenModal }) => {
     const [preview, setPreview] = useState();
     useEffect(() => {
         setValue('threadID', threadData?.length + 1);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [threadData])
 
 

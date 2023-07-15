@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import SingleThread from './SingleThread/SingleThread'
 import { Grid } from '@mui/material'
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 // import { getAllThread } from '../../../../actions/thread';
 
 const ThreadList = () => {
@@ -16,6 +16,7 @@ const ThreadList = () => {
                         if (user._id === singleThread.userID) {
                             singleThread.userData = user;
                         }
+                        return user
                     })
                     return (
                         <Grid item key={singleThread._id} xs={12} paddingBottom={1}>

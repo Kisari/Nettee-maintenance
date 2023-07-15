@@ -31,7 +31,7 @@ const SingleThread = ({ data }) => {
     useEffect(() => {
         setIsLike(data?.likes?.includes(currentUser?.data?.user._id));
         setIsPin(data?.pins?.includes(currentUser?.data?.user._id));
-    }, [data])
+    }, [data, currentUser?.data?.user._id])
     //open share box
     const [openShareBox, setOpenShareBox] = useState(false);
     const toggleOpenModal = (parameter) => {

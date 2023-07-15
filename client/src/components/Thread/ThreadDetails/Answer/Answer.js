@@ -82,6 +82,7 @@ const Answer = ({ data }) => {
                     break;
             }
         }
+        return badge
     })
     return (
         <>

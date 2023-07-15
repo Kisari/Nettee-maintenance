@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState } from 'react'
 import { StreamChat } from 'stream-chat'
 import "stream-chat-react/dist/css/v2/index.css"
 import { LoadingIndicator, Chat, ChannelList, Channel, Window, ChannelHeader, MessageList, MessageInput, useChatContext } from 'stream-chat-react'

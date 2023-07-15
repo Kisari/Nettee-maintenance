@@ -16,12 +16,12 @@ const Question = ({ data }) => {
                 <Grid container>
                     <Grid item xs={11}>
                         <Box paddingX={2}>
-                            <img src={Laptop} height='60px' width='60px'></img>
+                            <img src={Laptop} alt='img' height='60px' width='60px'></img>
                         </Box>
                     </Grid>
                     <Grid item xs={'auto'}  >
                         <Box>
-                            <img src={Checkmark} height='20px' width='20px'></img>
+                            <img src={Checkmark} alt='img' height='20px' width='20px'></img>
                         </Box>
                     </Grid>
                 </Grid>

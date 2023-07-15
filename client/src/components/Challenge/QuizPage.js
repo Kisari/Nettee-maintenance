@@ -1,6 +1,5 @@
 import { Container, CssBaseline, Box, Grid } from "@mui/material";
 import Quiz from "./Quiz"
-import QuestionData from "./QuestionData"
 import { useState } from "react";
 import questions from "./QuestionData";
 import QuizResult from "./QuizResult";

@@ -40,12 +40,16 @@ const ThreadDetails = () => {
             if (singleComment.userID === user._id) {
                 return singleComment.userID = user;
             }
+            //working
+            return singleComment
         })
     })
     allUser.map((user) => {
         if (user._id === thread?.userID) {
             thread = { ...thread, userData: user }
         }
+        //workingp
+        return user;
     })
     const [isLike, setIsLike] = useState(allThread?.likes?.includes(currentUser?.data?.user._id));
     const [isPin, setIsPin] = useState(allThread?.pins?.includes(currentUser?.data?.user._id));
@@ -61,6 +65,8 @@ const ThreadDetails = () => {
     useEffect(() => {
         setIsLike(allThread?.likes?.includes(currentUser?.data?.user._id));
         setIsPin(allThread?.pins?.includes(currentUser?.data?.user._id));
+        //working
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [allThread])
 
 
