@@ -1,10 +1,10 @@
-const crypto = require('crypto');
+const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const User = require("./../models/userModel");
 const Thread = require("./../models/threadModel");
-const sendEmail = require("./../utils/email")
+const sendEmail = require("./../utils/email");
 const { promisify } = require("util");
-const StreamChat = require('stream-chat').StreamChat;
+const StreamChat = require("stream-chat").StreamChat;
 const axios = require("axios");
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -12,20 +12,20 @@ const signToken = (id) => {
   });
 };
 
-const connectToStreamChat = async (id, name, image) => {
-  const streamchat = StreamChat.getInstance(process.env.STREAM_API_KEY, process.env.STREAM_API_KEY_SECRET);
+// const connectToStreamChat = async (id, name, image) => {
+//   const streamchat = StreamChat.getInstance(process.env.STREAM_API_KEY, process.env.STREAM_API_KEY_SECRET);
 
-  //check if the user is existed
-  const isExist = await streamchat.queryUsers({ id });
-  if (isExist.users.length > 0) {
-    const token = streamchat.createToken(id);
-    return token
-  } else {
-    await streamchat.upsertUser({ id, name, image });
-    const token = streamchat.createToken(id);
-    return token
-  }
-}
+//   //check if the user is existed
+//   const isExist = await streamchat.queryUsers({ id });
+//   if (isExist.users.length > 0) {
+//     const token = streamchat.createToken(id);
+//     return token
+//   } else {
+//     await streamchat.upsertUser({ id, name, image });
+//     const token = streamchat.createToken(id);
+//     return token
+//   }
+// }
 
 const createSendToken = async (user, statusCode, res) => {
   const token = signToken(user._id);
@@ -33,23 +33,27 @@ const createSendToken = async (user, statusCode, res) => {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
     ),
-    httpOnly: true
+    httpOnly: true,
   };
-  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+  if (process.env.NODE_ENV === "production") cookieOptions.secure = true;
 
-  res.cookie('jwt', token, cookieOptions);
+  res.cookie("jwt", token, cookieOptions);
 
   // Remove password from output
   user.password = undefined;
-  const streamToken = await connectToStreamChat(user._id.toString(), user.name, user.image);
+  // const streamToken = await connectToStreamChat(
+  //   user._id.toString(),
+  //   user.name,
+  //   user.image
+  // );
 
   res.status(statusCode).json({
-    status: 'success',
+    status: "success",
     token,
     data: {
-      user
+      user,
     },
-    streamToken
+    // streamToken,
   });
 };
 
@@ -62,20 +66,20 @@ exports.signup = async (req, res, next) => {
   });
 
   const data = {
-    "username": `${req.body.email}`,
-    "first_name": `${req.body.name}`,
-    "email": `${req.body.email}`,
-    "secret": `${req.body.email}`
+    username: `${req.body.email}`,
+    first_name: `${req.body.name}`,
+    email: `${req.body.email}`,
+    secret: `${req.body.email}`,
   };
 
   const config = {
-    method: 'post',
+    method: "post",
     maxBodyLength: Infinity,
-    url: 'https://api.chatengine.io/users/',
+    url: "https://api.chatengine.io/users/",
     headers: {
-      'PRIVATE-KEY': 'debcf359-8bde-4f01-97fc-40a5100959c8'
+      "PRIVATE-KEY": "debcf359-8bde-4f01-97fc-40a5100959c8",
     },
-    data: data
+    data: data,
   };
 
   axios(config)
@@ -116,7 +120,6 @@ exports.login = async (req, res, next) => {
 
 exports.getAllUser = async (req, res) => {
   try {
-
     const userData = await User.find();
     res.status(200).json({
       status: "Success",
@@ -136,7 +139,7 @@ exports.getAllUser = async (req, res) => {
 exports.updateUser = async (req, res) => {
   try {
     const userData = await User.findByIdAndUpdate(req.params.id, req.body, {
-      new: true
+      new: true,
     });
     res.status(200).json({
       status: "Successfully updated user data",
@@ -154,31 +157,33 @@ exports.updateUser = async (req, res) => {
 
 exports.forgotPassword = async (req, res, next) => {
   try {
-    const user = await User.findOne({ email: req.body.email })
+    const user = await User.findOne({ email: req.body.email });
     if (!user) {
       return next(
         res.status(404).json({
           status: "There is no user with email address",
         })
-      )
+      );
     }
     const resetToken = user.createPasswordResetToken();
     await user.save({ validateBeforeSave: false });
 
-    const resetURL = `${req.protocol}://${req.get('host')}/api/v1/user/resetPassword/${resetToken}`;
+    const resetURL = `${req.protocol}://${req.get(
+      "host"
+    )}/api/v1/user/resetPassword/${resetToken}`;
 
     const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}.\nIf you didn't forget your password, please ignore this email!`;
 
     try {
       await sendEmail({
         email: user.email,
-        subject: 'Your password reset token (valid for 10 min)',
-        message
+        subject: "Your password reset token (valid for 10 min)",
+        message,
       });
 
       res.status(200).json({
-        status: 'success',
-        message: 'Token sent to email!'
+        status: "success",
+        message: "Token sent to email!",
       });
     } catch (err) {
       user.passwordResetToken = undefined;
@@ -193,30 +198,30 @@ exports.forgotPassword = async (req, res, next) => {
     }
   } catch (err) {
     res.status(500).json({
-      message: err.message
-    })
+      message: err.message,
+    });
   }
-}
+};
 
 exports.resetPassword = async (req, res, next) => {
   // 1) Get user based on the token
   const hashedToken = crypto
-    .createHash('sha256')
+    .createHash("sha256")
     .update(req.params.token)
-    .digest('hex');
+    .digest("hex");
 
   const user = await User.findOne({
     passwordResetToken: hashedToken,
-    passwordResetExpires: { $gt: Date.now() }
+    passwordResetExpires: { $gt: Date.now() },
   });
 
   // 2) If token has not expired, and there is user, set the new password
   if (!user) {
     return next(
       res.status(400).json({
-        message: "Token is invalid or has expired"
+        message: "Token is invalid or has expired",
       })
-    )
+    );
   }
   user.password = req.body.password;
   user.passwordConfirm = req.body.passwordConfirm;
@@ -225,9 +230,9 @@ exports.resetPassword = async (req, res, next) => {
   await user.save();
 
   // 3) Update changedPasswordAt property for the user
-  // 4) Log the user in, send 
+  // 4) Log the user in, send
   createSendToken(user, 200, res);
-}
+};
 
 exports.protect = async (req, res, next) => {
   // 1) Getting token and check of it's there
@@ -278,11 +283,11 @@ exports.protect = async (req, res, next) => {
 
 exports.updatePassword = async (req, res, next) => {
   // 1) Get user from collection
-  const user = await User.findById(req.user.id).select('+password');
+  const user = await User.findById(req.user.id).select("+password");
 
   // 2) Check if POSTed current password is correct
   if (!(await user.correctPassword(req.body.passwordCurrent, user.password))) {
-    return next(new AppError('Your current password is wrong.', 401));
+    return next(new AppError("Your current password is wrong.", 401));
   }
 
   // 3) If so, update password
@@ -297,7 +302,7 @@ exports.updatePassword = async (req, res, next) => {
 
 exports.likeUnlikePost = async (req, res, next) => {
   try {
-    const currentUser = req.user
+    const currentUser = req.user;
 
     const post = await Thread.findByIdAndUpdate(req.params.id);
     if (!post) {
@@ -305,23 +310,23 @@ exports.likeUnlikePost = async (req, res, next) => {
         res.status(404).json({
           status: "Post not found",
         })
-      )
+      );
     }
 
     if (post.likes.includes(currentUser._id)) {
       const index = post.likes.indexOf(currentUser._id);
-      post.likes.splice(index, 1)
-      await post.save()
+      post.likes.splice(index, 1);
+      await post.save();
 
       return res.status(200).json({
-        message: "Post unliked"
-      })
+        message: "Post unliked",
+      });
     } else {
-      post.likes.push(currentUser._id)
-      await post.save()
+      post.likes.push(currentUser._id);
+      await post.save();
       return res.status(200).json({
-        message: "Post liked"
-      })
+        message: "Post liked",
+      });
     }
   } catch (err) {
     res.status(400).json({
@@ -330,11 +335,11 @@ exports.likeUnlikePost = async (req, res, next) => {
     });
     console.log(err);
   }
-}
+};
 
 exports.pinUnpinnedPost = async (req, res, next) => {
   try {
-    const currentUser = req.user
+    const currentUser = req.user;
 
     const post = await Thread.findByIdAndUpdate(req.params.id);
     if (!post) {
@@ -342,23 +347,23 @@ exports.pinUnpinnedPost = async (req, res, next) => {
         res.status(404).json({
           status: "Post not found",
         })
-      )
+      );
     }
 
     if (post.pins.includes(currentUser._id)) {
       const index = post.pins.indexOf(currentUser._id);
-      post.pins.splice(index, 1)
-      await post.save()
+      post.pins.splice(index, 1);
+      await post.save();
 
       return res.status(200).json({
-        message: "Post unpinned"
-      })
+        message: "Post unpinned",
+      });
     } else {
-      post.pins.push(currentUser._id)
-      await post.save()
+      post.pins.push(currentUser._id);
+      await post.save();
       return res.status(200).json({
-        message: "Post pinned"
-      })
+        message: "Post pinned",
+      });
     }
   } catch (err) {
     res.status(400).json({
@@ -367,11 +372,11 @@ exports.pinUnpinnedPost = async (req, res, next) => {
     });
     console.log(err);
   }
-}
+};
 
 exports.tagUntaggedPost = async (req, res, next) => {
   try {
-    const currentUser = req.user
+    const currentUser = req.user;
 
     const post = await Thread.findByIdAndUpdate(req.params.id);
     if (!post) {
@@ -379,23 +384,23 @@ exports.tagUntaggedPost = async (req, res, next) => {
         res.status(404).json({
           status: "Post not found",
         })
-      )
+      );
     }
 
     if (post.tags.includes(currentUser._id)) {
       const index = post.tags.indexOf(currentUser._id);
-      post.tags.splice(index, 1)
-      await post.save()
+      post.tags.splice(index, 1);
+      await post.save();
 
       return res.status(200).json({
-        message: "Post untagged"
-      })
+        message: "Post untagged",
+      });
     } else {
-      post.tags.push(currentUser._id)
-      await post.save()
+      post.tags.push(currentUser._id);
+      await post.save();
       return res.status(200).json({
-        message: "Post tagged"
-      })
+        message: "Post tagged",
+      });
     }
   } catch (err) {
     res.status(400).json({
@@ -404,25 +409,25 @@ exports.tagUntaggedPost = async (req, res, next) => {
     });
     console.log(err);
   }
-}
+};
 
 exports.shareUnsharedPost = async (req, res, next) => {
   try {
     // Params id here is the id of the thread
     const threadData = await Thread.findByIdAndUpdate(req.params.id, req.body, {
-      new: true
+      new: true,
     });
     if (!threadData) {
       return next(
         res.status(404).json({
           status: "Thread not found",
         })
-      )
+      );
     } else {
       res.status(200).json({
         status: "Successfully shared",
-        data: threadData
-      })
+        data: threadData,
+      });
     }
   } catch (err) {
     res.status(400).json({
@@ -431,4 +436,4 @@ exports.shareUnsharedPost = async (req, res, next) => {
     });
     console.log(err);
   }
-}
+};
