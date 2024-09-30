@@ -12,10 +12,6 @@
 - [@Nam Nguyen](https://github.com/namnguyen20999)
 
 
-## Demo
-
-https://nett33.vercel.app
-
 
 ## Run Locally
 
